@@ -1,0 +1,11 @@
+# EditorConfig is awesome:http://EditorConfig.org
+# Enforce java style new lines. Otherwise, assume default style in the editor in order to hold this file slim.
+
+# top-most EditorConfig file
+root = true
+
+[*.cs]
+csharp_new_line_before_open_brace = none
+csharp_new_line_before_else = false
+csharp_new_line_before_catch = false
+csharp_new_line_before_finally = false
