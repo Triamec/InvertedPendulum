@@ -63,10 +63,10 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Triamec.Tam.TriaLink">
-      <Version>7.19.0</Version>
+      <Version>7.19.3</Version>
     </PackageReference>
     <PackageReference Include="Triamec.Tools.TamaCompiler">
-      <Version>5.12.0</Version>
+      <Version>5.13.0</Version>
       <IncludeAssets>all</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
