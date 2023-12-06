@@ -66,7 +66,7 @@
       <Version>7.19.3</Version>
     </PackageReference>
     <PackageReference Include="Triamec.Tools.TamaCompiler">
-      <Version>5.13.0</Version>
+      <Version>5.13.1</Version>
       <IncludeAssets>all</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
