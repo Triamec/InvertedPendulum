@@ -10,7 +10,7 @@ static class Robot {
 	const float B2pC2 = B * B + C * C;
 	const float Inv_2bc = 1 / (2 * B * C);
 	const float BDivC = B / C;
-	const float BDivC2 = BDivC * BDivC;
+	//const float BDivC2 = BDivC * BDivC;
 	const float R2Max = (B + C) * (B + C);
 	const float R2Lim = 0.98f * R2Max;
 
@@ -103,8 +103,8 @@ static class Robot {
 		//       float ddalpha = inv_sin_alpha * (ddaSq * inv_2bc - dalpha * dalpha * cos_alpha);
 
 		// angle between a and b
-		float num = BDivC * cos_alpha - 1.0f;
-		float inv_den = 1 / (1 - 2 * BDivC * cos_alpha + BDivC2);
+		//       float num = BDivC * cos_alpha - 1.0f;
+		//       float inv_den = 1 / (1 - 2 * BDivC * cos_alpha + BDivC2);
 		float gamma = Math.Atan2(sin_alpha, BDivC - cos_alpha);
 		//       float dgamma = dalpha * num * inv_den;
 		//       float ddgamma = (ddalpha * num + dalpha * dalpha * bdivc * sin_alpha * (1 - bdivc2) * inv_den) * inv_den;
