@@ -195,9 +195,9 @@ static class PathPlanner3rdOrder {
 
 		// just use positive values and adjust time scaling -> t' = t/ts
 		float invJerk = 1.0f / ((jrk >= 0 ? jrk : -jrk) * Ts_p3);
-		pos = Math.Fabs(pos) * invJerk;
-		vel = Math.Fabs(vel) * invJerk * Ts;
-		acc = Math.Fabs(acc) * invJerk * Ts_p2;
+		pos = Math.Abs(pos) * invJerk;
+		vel = Math.Abs(vel) * invJerk * Ts;
+		acc = Math.Abs(acc) * invJerk * Ts_p2;
 
 		// calculation of nJrk based on the different possible constraints
 		// to not violate a constraint we take the smallest nJrk
@@ -250,8 +250,8 @@ static class PathPlanner3rdOrder {
 
 		// just use positive values and adjust time scaling -> t' = t/ts
 		float invJerk = 1.0f / ((jrk >= 0 ? jrk : -jrk) * Ts_p3);
-		vel = Math.Fabs(vel) * invJerk * Ts;
-		acc = Math.Fabs(acc) * invJerk * Ts_p2;
+		vel = Math.Abs(vel) * invJerk * Ts;
+		acc = Math.Abs(acc) * invJerk * Ts_p2;
 
 		// calculation of nJrk based on the different possible constraints
 		// to not violate a constraint we take the smallest nJrk

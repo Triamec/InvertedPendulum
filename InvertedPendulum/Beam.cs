@@ -145,8 +145,8 @@ static class Beam {
 		calibValueA = alphaCalib * calibValueA + (1 - alphaCalib) * Register.Axes_1.Signals.PositionController.Encoders_1.PhaseA;
 
 		// check if deviation out of limit
-		return Math.Fabs(calibValueB - Register.Axes_1.Signals.PositionController.Encoders_1.PhaseB) > Parameter.CalibIncThreshold ||
-			Math.Fabs(calibValueA - Register.Axes_1.Signals.PositionController.Encoders_1.PhaseA) > Parameter.CalibIncThreshold;
+		return Math.Abs(calibValueB - Register.Axes_1.Signals.PositionController.Encoders_1.PhaseB) > Parameter.CalibIncThreshold ||
+			Math.Abs(calibValueA - Register.Axes_1.Signals.PositionController.Encoders_1.PhaseA) > Parameter.CalibIncThreshold;
 	}
 
 	public static bool IsBeamReady() {
@@ -154,7 +154,7 @@ static class Beam {
 		BeamId bId = IdentifyBeam();
 		if (bId != BeamId.Invalid) {
 			if (beamId == bId) {
-				if (Math.Fabs(xIncPos) < Parameter.LockInThreshold && Math.Fabs(yIncPos) < Parameter.LockInThreshold) {
+				if (Math.Abs(xIncPos) < Parameter.LockInThreshold && Math.Abs(yIncPos) < Parameter.LockInThreshold) {
 
 					// reset velocity values
 					xIncVel = 0.0f;
@@ -175,7 +175,7 @@ static class Beam {
 	public static bool IsBeamLost() {
 		bool isLost = false;
 		BeamId bId = IdentifyBeam();
-		if (bId != beamId || Math.Fabs(xIncPos) > Parameter.LockOutThreshold || Math.Fabs(yIncPos) > Parameter.LockOutThreshold) {
+		if (bId != beamId || Math.Abs(xIncPos) > Parameter.LockOutThreshold || Math.Abs(yIncPos) > Parameter.LockOutThreshold) {
 			isLost = true;
 		}
 
@@ -265,7 +265,7 @@ static class Beam {
 		K[4] = Kt * (a3 + wi);
 
 		// integrator limit
-		IntegratorLimit = Math.Fabs(Parameter.IntegraorLimit * Parameter.g * K[3]);
+		IntegratorLimit = Math.Abs(Parameter.IntegraorLimit * Parameter.g * K[3]);
 
 		// reset calibration values
 		calibValueB = -IncBOffset;
