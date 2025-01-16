@@ -25,9 +25,10 @@ static class PathPlanner3rdOrder {
 
 	const float OneSixth = 1.0f / 6.0f;
 	const float OneThird = 1.0f / 3.0f;
+    const float twoPi = Math.PI * 2.0f;
 
-	/// <summary>Actual jerk</summary>
-	static float _jrkAct;
+    /// <summary>Actual jerk</summary>
+    static float _jrkAct;
 
 	/// <summary>Number jerk segment counts</summary>
 	static int _nJrk;
@@ -66,10 +67,13 @@ static class PathPlanner3rdOrder {
 
 	static bool _isVelMove;
 
-	/// <summary>
-	/// Gets the position
-	/// </summary>
-	public static float Pos { get; private set; }
+    static bool _isModuloTwoPi;
+    
+
+    /// <summary>
+    /// Gets the position
+    /// </summary>
+    public static float Pos { get; private set; }
 
 	/// <summary>
 	/// Gets the velocity.
@@ -100,8 +104,11 @@ static class PathPlanner3rdOrder {
 		_velAct = _velAct + _accAct + 0.5f * _jrkAct;
 		_accAct += _jrkAct;
 
-		// check if run is requested
-		if (!_stopMove) {
+        // apply modulo
+        if (_isModuloTwoPi) Pos %= twoPi;
+
+        // check if run is requested
+        if (!_stopMove) {
 			
 			// accelerate to desired velocity
 			if (_cntJrkPos < _nJrk) {
@@ -178,11 +185,12 @@ static class PathPlanner3rdOrder {
 	/// <summary>
 	/// Set the parameters of the position move.
 	/// </summary>
-	public static void InitPositionMove(float pos, float vel, float acc, float jrk) {
+	public static void InitPositionMove(float pos, float vel, float acc, float jrk, bool moduloTwoPi = false) {
 		_isVelMove = false;
+        _isModuloTwoPi = moduloTwoPi;
 
-		// if one parameter is zero, set all to zero
-		if ((pos == 0.0f) || (vel == 0.0f) || (acc == 0.0f) || (jrk == 0.0f)) {
+        // if one parameter is zero, set all to zero
+        if ((pos == 0.0f) || (vel == 0.0f) || (acc == 0.0f) || (jrk == 0.0f)) {
 			_nVel = 0;
 			_nAcc = 0;
 			_nJrk = 0;
@@ -234,19 +242,21 @@ static class PathPlanner3rdOrder {
 	/// <summary>
 	/// Set the parameters of the velocity move.
 	/// </summary>
-	public static void InitVelocityMove(float vel, float acc, float jrk) {
+	public static void InitVelocityMove(float vel, float acc, float jrk, bool moduloTwoPi = false) {
 		_isVelMove = true;
+        _isModuloTwoPi = moduloTwoPi;
 
-		// if one parameter is zero, set all to zero
-		if ((vel == 0.0f) || (acc == 0.0f) || (jrk == 0.0f)) {
+        // if one parameter is zero, set all to zero
+        if ((vel == 0.0f) || (acc == 0.0f) || (jrk == 0.0f)) {
 			_nAcc = 0;
 			_nJrk = 0;
 			_jrkMax = 0.0f;
 			return;
 		}
 
-		// store velocity with direction
-		_nVel = 0;
+        // store velocity with direction
+        float velSigned = vel;
+        _nVel = 0;
 
 		// just use positive values and adjust time scaling -> t' = t/ts
 		float invJerk = 1.0f / ((jrk >= 0 ? jrk : -jrk) * Ts_p3);
@@ -269,7 +279,7 @@ static class PathPlanner3rdOrder {
 		float nAccF = (float)_nAcc;
 
 		// recalc jerk to reach end position exactly
-		_jrkMax = vel / (nJrkF * (nJrkF + nAccF));
+		_jrkMax = velSigned / (nJrkF * (nJrkF + nAccF));
 		Reset();
 		_jrkAct = _jrkMax;
 	}

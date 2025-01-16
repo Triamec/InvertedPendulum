@@ -52,9 +52,11 @@ class InvertedPendulum {
 	static bool _isDryRunRequestedOrStart;
 
 	static InvertedPendulum() {
-		Beam.InitBeam();
+        TamaRegisters.TamaVersion_VI00 = Parameter.TamaVersion;
+        _state = State.Startup;
+        Beam.InitBeam();
 		Controller.InitController();
-	}
+    }
 
 	[TamaTask(Task.IsochronousMain)]
 	static void IsochronousTask() {
@@ -84,7 +86,8 @@ class InvertedPendulum {
 				switch (command) {
 					case Command.Start:
 						Utilities.ResetWarnings();
-						_state = State.Startup;
+                        _delayCountdown = 10000;
+                        _state = State.Startup;
 						break;
 
 					case Command.MoveToPhiZero:
@@ -123,7 +126,8 @@ class InvertedPendulum {
 				CheckTempSwitchState();
 				if (_isDryRunRequestedOrStart) {
 					Utilities.ResetWarnings();
-					_state = State.Startup;
+                    _delayCountdown = 10000;
+                    _state = State.Startup;
 				}
 				command = Command.NoCommand;
 				break;
@@ -131,7 +135,14 @@ class InvertedPendulum {
 			case State.Startup:
 				// Check for device or axes error
 				if (Utilities.IsDeviceOrAxisErrorPending()) {
-					if (!_resetActive) {
+                    if (_delayCountdown > 0) {
+                        // wait for DC bus
+                        if (Register.General.Signals.DcBusVoltage > Register.General.Parameters.DcBusVoltageLowerLimit) {
+                            _delayCountdown--;
+                        }
+
+                        Utilities.SetWarning(Utilities.Warning.DeviceOrAxisError);
+                    } else if (!_resetActive) { 
 						// try to reset
 						Register.General.Commands.ExternalError = false;
 						Register.General.Commands.Internals.Event = DeviceEvent.ResetFault;
@@ -298,7 +309,8 @@ class InvertedPendulum {
 		if (command == Command.Stop) {
 			nextState = State.Idle;
 		} else if (!_run) {
-			nextState = State.Startup;
+            _delayCountdown = 10000;
+            nextState = State.Startup;
 		}
 		return nextState;
 	}

@@ -111,9 +111,9 @@ static class Beam {
 				break;
 
 			case BeamId.BeamVerySort:
-
-				// do not change calibration values
-				break;
+                TamaRegisters.PF25_CalibOffsetB_S = IncBOffset;
+                TamaRegisters.PF26_CalibOffsetA_S = IncAOffset;
+                break;
 		}
 	}
 
@@ -192,8 +192,9 @@ static class Beam {
 		if (beamIdLevel < Parameter.BeamIdLowLevel) {
 			beamId = isVeryShortBeamRequested ? BeamId.BeamVerySort : BeamId.BeamLow;
 		} else if (beamIdLevel > Parameter.BeamIdHighLevel) {
-			beamId = BeamId.BeamHigh;
-		} else {
+			//beamId = BeamId.BeamHigh;
+            beamId = isVeryShortBeamRequested ? BeamId.BeamVerySort : BeamId.BeamHigh;
+        } else {
 			beamId = BeamId.Invalid;
 		}
 		TamaRegisters.BarIdentification_VI02 = (int)beamId;
@@ -202,7 +203,8 @@ static class Beam {
 
 	public static void SetParameters(BeamId bId) {
 		float WN2;
-		beamId = bId;
+        float bandwithGain = 1.0f;
+        beamId = bId;
 		switch (bId) {
 			case BeamId.BeamLow: // assigned to short beam 160mm
 				WN2 = Parameter.WNLowLevel * Parameter.WNLowLevel;
@@ -220,15 +222,18 @@ static class Beam {
 				IncAOffset = TamaRegisters.PF24_CalibOffsetA_HL;
 				IncBGain = Parameter.HallGainB_HL;
 				IncAGain = Parameter.HallGainA_HL;
-				break;
+                bandwithGain = 0.7f;
+                break;
 
 			case BeamId.BeamVerySort:
 				WN2 = Parameter.WNLowLevel * Parameter.WNVeryShort;
 				l0 = Parameter.L0VeryShort;
-				IncBOffset = TamaRegisters.PF21_CalibOffsetB_LL;
-				IncAOffset = TamaRegisters.PF22_CalibOffsetA_LL;
-				IncBGain = Parameter.HallGainB_LL;
-				IncAGain = Parameter.HallGainA_LL;
+                IncBOffset = TamaRegisters.PF25_CalibOffsetB_S;
+                IncAOffset = TamaRegisters.PF26_CalibOffsetA_S;
+                //IncBGain = Parameter.HallGainB_LL;
+                //IncAGain = Parameter.HallGainA_LL;
+                IncBGain = Parameter.HallGainB_HL;
+				IncAGain = Parameter.HallGainA_HL;
 				break;
 
 			default:
@@ -243,9 +248,9 @@ static class Beam {
 
 		alphaVel = Math.Exp(-TamaRegisters.P03_fVel_Hz * TwoPi * Parameter.SamplingTime);
 
-		float wi = TamaRegisters.P02_fIntCtrl * TwoPi;
-		float w0 = TamaRegisters.P01_fStateCtrl_Hz * TwoPi;
-		float w02 = w0 * w0;
+        float wi = TamaRegisters.P02_fIntCtrl * TwoPi;
+        float w0 = TamaRegisters.P01_fStateCtrl_Hz * TwoPi * bandwithGain;
+        float w02 = w0 * w0;
 		float w03 = w02 * w0;
 		float D0 = TamaRegisters.PF00_DStateCtrl;
 

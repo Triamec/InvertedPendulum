@@ -4,8 +4,11 @@ using Triamec.Tama.Vmid5;
 
 static class Parameter {
 
-	/// <summary>Sampling frequency [Hz]</summary>
-	public const float SamplingFrequency = 10000.0f;
+    /// <summary>tama version</summary>
+    public const int TamaVersion = 2;
+
+    /// <summary>Sampling frequency [Hz]</summary>
+    public const float SamplingFrequency = 10000.0f;
 
 	/// <summary>Sampling time [s]</summary>
 	public const float SamplingTime = 1.0f / SamplingFrequency;
@@ -20,7 +23,7 @@ static class Parameter {
 	public const int RegulatingDelay = (int)(0.2f * SamplingFrequency);
 
 	/// <summary>Delay [inc] used to stabilize calibration</summary>
-	public const int CalibrationDelay = (int)(15f * SamplingFrequency);
+	public const int CalibrationDelay = (int)(8f * SamplingFrequency);
 
 	/// <summary>Threshold [inc] to prolong calibration interval</summary>
 	public const float CalibIncThreshold = 0.01f / HallGainB_LL;
@@ -55,7 +58,7 @@ static class Parameter {
 	public const float Phi1HomePosition = 45f * DegToRad;
 
 	/// <summary>Speed [rad/s] used for taxi motion</summary>
-	public const float TaxiSpeed = 0.5f;
+	public const float TaxiSpeed = 2.0f;
 	#endregion
 
 	#region controller parameters
@@ -100,8 +103,8 @@ static class Parameter {
 	/// <summary>Low level [V] used for beam identification</summary>
 	public const float BeamIdLowLevel = 1.1f;
 
-	/// <summary>Natural frequency [1/s] of beam.</summary>
-	public const float WNLowLevel = 9.0f;
+    /// <summary>Natural frequency [1/s] of beam.</summary>
+    public const float WNLowLevel = 9.0f;
 
 	/// <summary>Length [m] of mathematical pendulum</summary>
 	public const float L0LowLevel = g / WNLowLevel / WNLowLevel;
@@ -130,10 +133,10 @@ static class Parameter {
 	public const float BeamIdHighLevel = 2.1f;
 	
 	/// <summary>Natural frequency [Hz] of beam.</summary>
-	public const float WNHighLevel = 5.35f;
+	public const float WNHighLevel = 3.8f;//5.0f;
 
-	/// <summary>Length [m] of mathematical pendulum</summary>
-	public const float L0HighLevel = g / WNHighLevel / WNHighLevel;
+    /// <summary>Length [m] of mathematical pendulum</summary>
+    public const float L0HighLevel = g / WNHighLevel / WNHighLevel;
 
 	/// <summary>Hall sensor gain [rad/inc] in B direction</summary>
 	public const float HallGainB_HL = -5.92493e-005f;
@@ -146,8 +149,8 @@ static class Parameter {
 
 	#region path planner
 
-	public const int NumberOfCircleTurns = 20;
-	public const int NumberOfLissajousTurns = 3;
+	public const int NumberOfCircleTurns = 12;
+	public const int NumberOfLissajousTurns = 2;
 	
 	/// <summary>Wait time [s] after move</summary>
 	public const float WaitAfterMove = 1.0f;

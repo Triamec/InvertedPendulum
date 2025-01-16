@@ -15,18 +15,25 @@ static class TamaRegisters {
 	public static float PF12_Jrk_m3_s => Register.Application.Parameters.Floats[12];
 	public static float PF13_Radius0_m => Register.Application.Parameters.Floats[13];
 	public static float PF14_Radius1_m => Register.Application.Parameters.Floats[14];
-	public static float PF15_Angle_rad => Register.Application.Parameters.Floats[15];
 
-	public static float PF21_CalibOffsetB_LL { get { return Register.Application.Parameters.Floats[21]; } set { Register.Application.Parameters.Floats[21] = value; } }
+    public static float PF16_Vel_Circle_m_s => Register.Application.Parameters.Floats[16];
+    public static float PF17_Acc_Circle_m2_s => Register.Application.Parameters.Floats[17];
+    public static float PF18_Jrk_Circle_m3_s => Register.Application.Parameters.Floats[18];
+
+
+    public static float PF21_CalibOffsetB_LL { get { return Register.Application.Parameters.Floats[21]; } set { Register.Application.Parameters.Floats[21] = value; } }
 	public static float PF22_CalibOffsetA_LL { get { return Register.Application.Parameters.Floats[22]; } set { Register.Application.Parameters.Floats[22] = value; } }
 	public static float PF23_CalibOffsetB_HL { get { return Register.Application.Parameters.Floats[23]; } set { Register.Application.Parameters.Floats[23] = value; } }
 	public static float PF24_CalibOffsetA_HL { get { return Register.Application.Parameters.Floats[24]; } set { Register.Application.Parameters.Floats[24] = value; } }
+    public static float PF25_CalibOffsetB_S  { get { return Register.Application.Parameters.Floats[25]; } set { Register.Application.Parameters.Floats[25] = value; } }
+    public static float PF26_CalibOffsetA_S  { get { return Register.Application.Parameters.Floats[26]; } set { Register.Application.Parameters.Floats[26] = value; } }
 
-	#endregion
 
-	#region Tama variables floats
+    #endregion
 
-	public static float XPosMoveCmd_VF00 { set { Register.Application.Variables.Floats[00] = value; } get { return Register.Application.Variables.Floats[00]; } }
+    #region Tama variables floats
+
+    public static float XPosMoveCmd_VF00 { set { Register.Application.Variables.Floats[00] = value; } get { return Register.Application.Variables.Floats[00]; } }
 	public static float YPosMoveCmd_VF01 { set { Register.Application.Variables.Floats[01] = value; } get { return Register.Application.Variables.Floats[01]; } }
 
 	public static float XPosCenter_VF10 { set { Register.Application.Variables.Floats[10] = value; } get { return Register.Application.Variables.Floats[10]; } }

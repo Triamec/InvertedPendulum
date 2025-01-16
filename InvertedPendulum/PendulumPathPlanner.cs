@@ -1,5 +1,7 @@
 ﻿// Copyright © 2017 Triamec Motion AG
 
+# define FAST_SEQUENCE
+
 using Triamec.Tama.Vmid5;
 
 /// <remarks>
@@ -50,10 +52,13 @@ static class PendulumPathPlanner {
 	/// <summary>Move sequence state</summary>
 	static int _sequenceState;
 
-		/// <summary>
-	/// Reset states
-	/// </summary>
-	public static void Reset(float xPos, float yPos) {
+    /// <summary>lissajous scaling</summary>
+    static float lissajousScalingGain;
+
+    /// <summary>
+    /// Reset states
+    /// </summary>
+    public static void Reset(float xPos, float yPos) {
 		_moveType = MoveType.None;
 		_sequenceState = 0;
 
@@ -73,7 +78,185 @@ static class PendulumPathPlanner {
 	public static bool RunMoveSequence() {
 		bool isDone = false;
 		if (_moveType == MoveType.None) {
-			switch (_sequenceState) {
+#if FAST_SEQUENCE
+            switch (_sequenceState)
+            {
+                case 0:
+                    InitToPointMove(Robot.xPosHome, Robot.yPosHome + 0.2f, 
+                        TamaRegisters.PF10_Vel_m_s, TamaRegisters.PF11_Acc_m2_s, TamaRegisters.PF12_Jrk_m3_s, 
+                        0.5f);
+                    _sequenceState++;
+                    break;
+                case 1:
+                    InitToPointMove(Robot.xPosHome - 0.25f, Robot.yPosHome + 0.2f,
+                        TamaRegisters.PF10_Vel_m_s, TamaRegisters.PF11_Acc_m2_s, TamaRegisters.PF12_Jrk_m3_s,
+                        0.5f);
+                    _sequenceState++;
+                    break;
+                case 2:
+                    InitToPointMove(Robot.xPosHome - 0.25f, Robot.yPosHome - 0.2f, 
+                        TamaRegisters.PF10_Vel_m_s, TamaRegisters.PF11_Acc_m2_s, TamaRegisters.PF12_Jrk_m3_s, 
+                        0.5f);
+                    _sequenceState++;
+                    break;
+                case 3:
+                    InitToPointMove(Robot.xPosHome, Robot.yPosHome - 0.2f,
+                        TamaRegisters.PF10_Vel_m_s, TamaRegisters.PF11_Acc_m2_s, TamaRegisters.PF12_Jrk_m3_s,
+                        0.5f);
+                    _sequenceState++;
+                    break;
+                case 4:
+                    InitToPointMove(Robot.xPosHome, Robot.yPosHome, 
+                        TamaRegisters.PF10_Vel_m_s, TamaRegisters.PF11_Acc_m2_s, TamaRegisters.PF12_Jrk_m3_s,
+                        0.0f);
+                    _sequenceState++;
+                    break;
+                case 5:
+                    // adjust interpolation error
+                    InitToPointMove(Robot.xPosHome, Robot.yPosHome, 
+                        TamaRegisters.PF10_Vel_m_s, TamaRegisters.PF11_Acc_m2_s/5.0f, TamaRegisters.PF12_Jrk_m3_s,
+                        Parameter.WaitAfterMove);
+                    _sequenceState = 7;
+                    break;
+
+                case 7:
+                    {
+                        float rotAngle;
+                        switch (Beam.beamId)
+                        {
+                            case Beam.BeamId.BeamVerySort:
+                                rotAngle = -1.0f;
+                                break;
+                            case Beam.BeamId.BeamHigh:
+                                rotAngle = -1.0f;
+                                break;
+                            default:
+                                rotAngle = -1.4f;
+                                break;
+                        }
+                        InitCircleMove(0.0f, 0.0f, rotAngle,
+                            TamaRegisters.PF10_Vel_m_s, TamaRegisters.PF11_Acc_m2_s, TamaRegisters.PF12_Jrk_m3_s,
+                            0.0f);
+                        _sequenceState++;
+                    }
+                    break;
+                case 8:
+                    {
+                        float rotAngle;
+                        switch (Beam.beamId)
+                        {
+                            case Beam.BeamId.BeamVerySort:
+                                rotAngle = 2.0f;
+                                break;
+                            case Beam.BeamId.BeamHigh:
+                                rotAngle = 2.0f;
+                                break;
+                            default:
+                                rotAngle = 2.8f;
+                                break;
+                        }
+                        InitCircleMove(0.0f, 0.0f, rotAngle,
+                            TamaRegisters.PF10_Vel_m_s, TamaRegisters.PF11_Acc_m2_s, TamaRegisters.PF12_Jrk_m3_s,
+                            0.0f);
+                    }
+                    _sequenceState++;
+                    break;
+                case 9:
+                    {
+                        float rotAngle;
+                        switch (Beam.beamId)
+                        {
+                            case Beam.BeamId.BeamVerySort:
+                                rotAngle = -1.0f;
+                                break;
+                            case Beam.BeamId.BeamHigh:
+                                rotAngle = -1.0f;
+                                break;
+                            default:
+                                rotAngle = -1.4f;
+                                break;
+                        }
+                        InitCircleMove(0.0f, 0.0f, rotAngle,
+                            TamaRegisters.PF10_Vel_m_s, TamaRegisters.PF11_Acc_m2_s, TamaRegisters.PF12_Jrk_m3_s,
+                            0.0f);
+                    }
+                    _sequenceState++;
+                    break;
+                case 10:
+                    // adjust interpolation error
+                    InitToPointMove(Robot.xPosHome , Robot.yPosHome, 
+                        TamaRegisters.PF10_Vel_m_s, TamaRegisters.PF11_Acc_m2_s / 5.0f, 0.2f, 
+                        Parameter.WaitAfterMove);
+                    _sequenceState++;
+                    break;
+                case 11:
+                    // spiral move
+                    float dynGain;
+                    switch (Beam.beamId)
+                    {
+                        case Beam.BeamId.BeamLow:
+                            dynGain = 1.2f;                  
+                            break;
+                        case Beam.BeamId.BeamVerySort:
+                            dynGain = 1.0f;
+                            break;
+                        case Beam.BeamId.BeamHigh:
+                        default:
+                            dynGain = 1.0f;
+                            break;
+                    }                  
+                    InitCircleMove(Robot.xPosHome - Parameter.CircleRadius, Robot.yPosHome, 
+                        Parameter.NumberOfCircleTurns * 2.0f * Math.PI, 
+                        TamaRegisters.PF16_Vel_Circle_m_s* dynGain, TamaRegisters.PF17_Acc_Circle_m2_s, TamaRegisters.PF18_Jrk_Circle_m3_s, 
+                        0.0f);
+                    _sequenceState++;
+                    break;
+                case 12:
+                    // adjust interpolation error
+                    InitToPointMove(Robot.xPosHome, Robot.yPosHome,
+                        TamaRegisters.PF10_Vel_m_s, TamaRegisters.PF11_Acc_m2_s / 5.0f, 0.2f,
+                        Parameter.WaitAfterMove);
+                    _sequenceState++;
+                    break;
+                case 13:
+                    switch (Beam.beamId)
+                    {
+                        case Beam.BeamId.BeamLow:
+                            dynGain = 1.0f;
+                            lissajousScalingGain = 1.0f;
+                            break;
+                        case Beam.BeamId.BeamHigh:
+                            dynGain = 0.7f;
+                            lissajousScalingGain = 0.7f;
+                            break;
+                        case Beam.BeamId.BeamVerySort:
+                            dynGain = 0.2f;
+                            lissajousScalingGain = 0.8f;
+                            break;
+                        
+                        default:
+                            dynGain = 1.2f;
+                            break;
+                    }
+                    InitLissajousMove(TamaRegisters.PF10_Vel_m_s, TamaRegisters.PF11_Acc_m2_s* dynGain, TamaRegisters.PF12_Jrk_m3_s* dynGain,
+                        0.0f);
+                    _sequenceState ++;
+                    break;
+                case 14:
+                    // adjust interpolation error
+                    InitToPointMove(Robot.xPosHome, Robot.yPosHome,
+                        TamaRegisters.PF10_Vel_m_s, TamaRegisters.PF11_Acc_m2_s / 5.0f, 0.2f,
+                        Parameter.WaitAfterMove);
+                    _sequenceState++;
+                    break;
+                case 15:
+                    _sequenceState = 0;
+                    isDone = true;
+                    break;
+            }    
+#else
+
+            switch (_sequenceState) {
 
 				case 0:
 					InitToPointMove(Robot.xPosHome, Robot.yPosHome + 0.2f,
@@ -232,8 +415,9 @@ static class PendulumPathPlanner {
 					isDone = true;
 					break;
 			}
-		}
-		return isDone;
+#endif
+        }
+        return isDone;
 	}
 
 	public static bool RunDynamicMoveSequence() {
@@ -288,7 +472,8 @@ static class PendulumPathPlanner {
 					break;
 
 				case 6:
-					InitLissajousMove(vMax, aMax, jMax,
+                    lissajousScalingGain = 1.0f;
+                    InitLissajousMove(vMax, aMax, jMax,
 						0.0f);
 					_sequenceState++;
 					break;
@@ -448,8 +633,8 @@ static class PendulumPathPlanner {
 	static void CalcCircleTraj() {
 		float psi = PathPlanner3rdOrder.Pos + _psi0;
 
-		float sinPsiR = (Math.Sin(psi) * _radius) % TwoPi;
-		float cosPsiR = (Math.Cos(psi) * _radius) % TwoPi;
+		float sinPsiR = Math.Sin(psi) * _radius;
+		float cosPsiR = Math.Cos(psi) * _radius;
 		float vel = PathPlanner3rdOrder.Vel;
 		float vel2 = vel * vel;
 		float vel3 = vel2 * vel;
@@ -460,7 +645,7 @@ static class PendulumPathPlanner {
 		xState.acc = -cosPsiR * vel2 - sinPsiR * PathPlanner3rdOrder.Acc;
 		xState.jrk = sinPsiR * (vel3 - PathPlanner3rdOrder.Jrk) - 3.0f * cosPsiR * vel * PathPlanner3rdOrder.Acc;
 
-		// x axis dynamics
+		// y axis dynamics
 		yState.pos = sinPsiR + _y0;
 		yState.vel = cosPsiR * vel;
 		yState.acc = -sinPsiR * vel2 + cosPsiR * PathPlanner3rdOrder.Acc;
@@ -472,7 +657,7 @@ static class PendulumPathPlanner {
 		_moveType = MoveType.Lissajous;
 		_stayDuration = stayAfterDuration;
 		// radius and angle are defined by the connection form the center of rotation to the current position
-		_x0 = Robot.xPosHome - TamaRegisters.PF13_Radius0_m * OneOverSqrtTwo;
+		_x0 = Robot.xPosHome - TamaRegisters.PF13_Radius0_m* lissajousScalingGain * OneOverSqrtTwo;
 		_y0 = Robot.yPosHome;
 		_psi0 = Math.PI / 4.0f;
 
@@ -489,24 +674,24 @@ static class PendulumPathPlanner {
 	}
 
 	static void CalcLissajousTraj() {
-		float psiX = (2 * PathPlanner3rdOrder.Pos + _psi0) % TwoPi;
-		float psiY = PathPlanner3rdOrder.Pos % TwoPi;
+		float psiX = (2 * PathPlanner3rdOrder.Pos + _psi0);
+		float psiY = PathPlanner3rdOrder.Pos;
 
 		float vel = PathPlanner3rdOrder.Vel;
 		float vel2 = vel * vel;
 		float vel3 = vel2 * vel;
 
 		// x axis dynamics
-		float cosPsiR = Math.Cos(psiX) * TamaRegisters.PF13_Radius0_m;
-		float sinPsiR = Math.Sin(psiX) * TamaRegisters.PF13_Radius0_m;
+		float cosPsiR = Math.Cos(psiX) * TamaRegisters.PF13_Radius0_m * lissajousScalingGain;
+		float sinPsiR = Math.Sin(psiX) * TamaRegisters.PF13_Radius0_m * lissajousScalingGain;
 		xState.pos = sinPsiR + _x0;
 		xState.vel = 2.0f * cosPsiR * vel;
 		xState.acc = -4.0f * sinPsiR * vel2 + 2.0f * cosPsiR * PathPlanner3rdOrder.Acc;
 		xState.jrk = -cosPsiR * (8.0f * vel3 - 2.0f * PathPlanner3rdOrder.Jrk) - 12.0f * sinPsiR * vel * PathPlanner3rdOrder.Acc;
 
 		// y axis dynamics
-		cosPsiR = Math.Cos(psiY) * TamaRegisters.PF14_Radius1_m;
-		sinPsiR = Math.Sin(psiY) * TamaRegisters.PF14_Radius1_m;
+		cosPsiR = Math.Cos(psiY) * TamaRegisters.PF14_Radius1_m * lissajousScalingGain;
+		sinPsiR = Math.Sin(psiY) * TamaRegisters.PF14_Radius1_m * lissajousScalingGain;
 		yState.pos = sinPsiR + _y0;
 		yState.vel = cosPsiR * vel;
 		yState.acc = -sinPsiR * vel2 + cosPsiR * PathPlanner3rdOrder.Acc;
