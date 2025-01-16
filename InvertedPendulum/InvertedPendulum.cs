@@ -1,4 +1,4 @@
-﻿// Copyright © 2017 Triamec Motion AG
+﻿// Copyright © 2025 Triamec Motion AG
 
 using Triamec.Tama.Rlid19;
 using Triamec.Tama.Vmid5;
