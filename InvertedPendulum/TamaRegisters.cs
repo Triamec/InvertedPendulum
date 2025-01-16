@@ -31,6 +31,10 @@ static class TamaRegisters {
 
     #endregion
 
+    #region parameters boolean
+    public static bool PB_UseVerylongPendulum { get { return Register.Application.Parameters.Booleans[0]; } set { Register.Application.Parameters.Booleans[0] = value; } }
+    #endregion 
+
     #region Tama variables floats
 
     public static float XPosMoveCmd_VF00 { set { Register.Application.Variables.Floats[00] = value; } get { return Register.Application.Variables.Floats[00]; } }

@@ -104,10 +104,10 @@ static class Parameter {
 	public const float BeamIdLowLevel = 1.1f;
 
     /// <summary>Natural frequency [1/s] of beam.</summary>
-    public const float WNLowLevel = 9.0f;
+    public const float WNLowLevel160mm = 9.0f;
 
 	/// <summary>Length [m] of mathematical pendulum</summary>
-	public const float L0LowLevel = g / WNLowLevel / WNLowLevel;
+	public const float L0LowLevel160mm = g / WNLowLevel160mm / WNLowLevel160mm;
 
 	/// <summary>Hall sensor gain [rad/inc] in B direction.</summary>
 	public const float HallGainB_LL = 5.82786e-005f;
@@ -120,10 +120,10 @@ static class Parameter {
 	#region beam low level (22mm, very short)
 
 	/// <summary>Natural frequency [Hz] of beam</summary>
-	public const float WNVeryShort = 26.0f; //8.5f;
+	public const float WNVeryShort22mm = 15.0f; //8.5f;
 	
 	/// <summary>length [m] of mathematical pendulum</summary>
-	public const float L0VeryShort = g / WNVeryShort / WNVeryShort;
+	public const float L0VeryShort22mm = g / WNVeryShort22mm / WNVeryShort22mm;
 
 	#endregion
 
@@ -133,13 +133,15 @@ static class Parameter {
 	public const float BeamIdHighLevel = 2.1f;
 	
 	/// <summary>Natural frequency [Hz] of beam.</summary>
-	public const float WNHighLevel = 3.8f;//5.0f;
+	public const float WNHighLevel970mm = 3.8f;
+    public const float WNHighLevel460mm = 5.0f;
 
     /// <summary>Length [m] of mathematical pendulum</summary>
-    public const float L0HighLevel = g / WNHighLevel / WNHighLevel;
+    public const float L0HighLevel970mm = g / WNHighLevel970mm / WNHighLevel970mm;
+    public const float L0HighLevel460mm = g / WNHighLevel460mm / WNHighLevel460mm;
 
-	/// <summary>Hall sensor gain [rad/inc] in B direction</summary>
-	public const float HallGainB_HL = -5.92493e-005f;
+    /// <summary>Hall sensor gain [rad/inc] in B direction</summary>
+    public const float HallGainB_HL = -5.92493e-005f;
 	
 	/// <summary>Hall sensor gain [rad/inc] in B direction</summary>
 	public const float HallGainA_HL = 5.83887e-005f;

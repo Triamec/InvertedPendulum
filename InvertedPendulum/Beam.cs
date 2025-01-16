@@ -207,38 +207,43 @@ static class Beam {
         beamId = bId;
 		switch (bId) {
 			case BeamId.BeamLow: // assigned to short beam 160mm
-				WN2 = Parameter.WNLowLevel * Parameter.WNLowLevel;
-				l0 = Parameter.L0LowLevel;
+				WN2 = Parameter.WNLowLevel160mm * Parameter.WNLowLevel160mm;
+				l0 = Parameter.L0LowLevel160mm;
 				IncBOffset = TamaRegisters.PF21_CalibOffsetB_LL;
 				IncAOffset = TamaRegisters.PF22_CalibOffsetA_LL;
 				IncBGain = Parameter.HallGainB_LL;
 				IncAGain = Parameter.HallGainA_LL;
 				break;
 
-			case BeamId.BeamHigh: // assigned to long beam 480mm
-				WN2 = Parameter.WNHighLevel * Parameter.WNHighLevel;
-				l0 = Parameter.L0HighLevel;
+			case BeamId.BeamHigh: // assigned to long beam
+				if (TamaRegisters.PB_UseVerylongPendulum) {
+                    WN2 = Parameter.WNHighLevel970mm * Parameter.WNHighLevel970mm;
+                    l0 = Parameter.L0HighLevel970mm;
+                }else {
+                    WN2 = Parameter.WNHighLevel460mm * Parameter.WNHighLevel460mm;
+                    l0 = Parameter.L0HighLevel460mm;
+                }
 				IncBOffset = TamaRegisters.PF23_CalibOffsetB_HL;
 				IncAOffset = TamaRegisters.PF24_CalibOffsetA_HL;
 				IncBGain = Parameter.HallGainB_HL;
 				IncAGain = Parameter.HallGainA_HL;
-                bandwithGain = 0.7f;
+                bandwithGain = TamaRegisters.PB_UseVerylongPendulum?  0.7f:1.0f;
                 break;
 
 			case BeamId.BeamVerySort:
-				WN2 = Parameter.WNLowLevel * Parameter.WNVeryShort;
-				l0 = Parameter.L0VeryShort;
+				WN2 = Parameter.WNVeryShort22mm * Parameter.WNVeryShort22mm;
+				l0 = Parameter.L0VeryShort22mm;
                 IncBOffset = TamaRegisters.PF25_CalibOffsetB_S;
                 IncAOffset = TamaRegisters.PF26_CalibOffsetA_S;
-                //IncBGain = Parameter.HallGainB_LL;
-                //IncAGain = Parameter.HallGainA_LL;
-                IncBGain = Parameter.HallGainB_HL;
-				IncAGain = Parameter.HallGainA_HL;
+                IncBGain = Parameter.HallGainB_LL;
+                IncAGain = Parameter.HallGainA_LL;
+                //IncBGain = Parameter.HallGainB_HL;
+				//IncAGain = Parameter.HallGainA_HL;
 				break;
 
 			default:
-				WN2 = Parameter.WNLowLevel * Parameter.WNLowLevel;
-				l0 = Parameter.L0LowLevel;
+				WN2 = Parameter.WNLowLevel160mm * Parameter.WNLowLevel160mm;
+				l0 = Parameter.L0LowLevel160mm;
 				IncBOffset = TamaRegisters.PF21_CalibOffsetB_LL;
 				IncAOffset = TamaRegisters.PF22_CalibOffsetA_LL;
 				IncBGain = Parameter.HallGainB_LL;
