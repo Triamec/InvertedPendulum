@@ -1,5 +1,6 @@
 ﻿// Copyright © 2025 Triamec Motion AG
 
+using Triamec.Tam.Registers;
 using Triamec.Tama.Rlid19;
 using Triamec.Tama.Vmid5;
 using Triamec.TriaLink;

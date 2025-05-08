@@ -17,7 +17,6 @@ static class PendulumPathPlanner {
 	}
 
 	const float OneOverSqrtTwo = 0.70710678118654752440084436210485f;
-	const float TwoPi = Math.PI * 2.0f;
 
 	public static Utilities.MoveState xState;
 	public static Utilities.MoveState yState;

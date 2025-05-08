@@ -1,8 +1,8 @@
 ﻿// Copyright © 2017 Triamec Motion AG
 
 using System;
+using Triamec.Tam.Registers;
 using Triamec.Tama.Rlid19;
-using Triamec.TriaLink;
 
 static class Utilities {
 	[Flags]

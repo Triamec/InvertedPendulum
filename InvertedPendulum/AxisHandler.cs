@@ -1,6 +1,7 @@
 ﻿// Copyright © 2017 Triamec Motion AG
 
 using Triamec.TriaLink;
+using Triamec.Tam.Registers;
 using Triamec.Tama.Rlid19;
 
 static class AxisHandler {
